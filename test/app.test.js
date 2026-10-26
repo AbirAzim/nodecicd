@@ -53,3 +53,51 @@ test('POST /users without a name returns 400', async () => {
     assert.equal(res.status, 400);
     assert.deepEqual(res.body, { error: 'Name is required' });
 });
+
+test('GET /info returns app info', async () => {
+    const res = await request(app).get('/info');
+
+    assert.equal(res.status, 200);
+    assert.equal(res.body.name, 'simple-node');
+    assert.equal(typeof res.body.uptime, 'number');
+    assert.ok(res.body.time);
+});
+
+test('PUT /users/:id updates a user', async () => {
+    const res = await request(app).put('/users/2').send({ name: 'Bobby' });
+
+    assert.equal(res.status, 200);
+    assert.deepEqual(res.body, { id: 2, name: 'Bobby' });
+});
+
+test('PUT /users/:id returns 404 for a missing user', async () => {
+    const res = await request(app).put('/users/999').send({ name: 'Nobody' });
+
+    assert.equal(res.status, 404);
+    assert.deepEqual(res.body, { error: 'User not found' });
+});
+
+test('PUT /users/:id without a name returns 400', async () => {
+    const res = await request(app).put('/users/1').send({});
+
+    assert.equal(res.status, 400);
+    assert.deepEqual(res.body, { error: 'Name is required' });
+});
+
+test('DELETE /users/:id removes a user', async () => {
+    const created = await request(app).post('/users').send({ name: 'Temp' });
+    const id = created.body.id;
+
+    const res = await request(app).delete(`/users/${id}`);
+    assert.equal(res.status, 204);
+
+    const check = await request(app).get(`/users/${id}`);
+    assert.equal(check.status, 404);
+});
+
+test('DELETE /users/:id returns 404 for a missing user', async () => {
+    const res = await request(app).delete('/users/999');
+
+    assert.equal(res.status, 404);
+    assert.deepEqual(res.body, { error: 'User not found' });
+});

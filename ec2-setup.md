@@ -173,6 +173,48 @@ You should see:
 Docker Compose version v2.x.x
 ```
 
+### 3e. Install Buildx
+
+Compose uses another plugin, **Buildx** (Docker's build engine), to build images. Amazon Linux ships with no Buildx or an old one, so `docker compose up --build` fails with:
+
+```
+compose build requires buildx 0.17.0 or later
+```
+
+Install the latest Buildx into the same plugin folder:
+
+```bash
+BUILDX_VERSION=$(curl -s https://api.github.com/repos/docker/buildx/releases/latest | grep '"tag_name"' | cut -d '"' -f4)
+echo $BUILDX_VERSION
+```
+
+Asks GitHub for the newest Buildx release and saves its name (e.g. `v0.19.3`) in a variable. Unlike Compose, Buildx's download link includes the version number, so you need it first.
+
+| Part | Meaning |
+| ---- | ------- |
+| `curl -s https://api.github.com/...` | Get info about the latest release (`-s` = silent, no progress bar) |
+| `grep '"tag_name"'` | Keep only the line with the version name |
+| `cut -d '"' -f4` | Cut that line at each `"` and keep the 4th piece, the version itself |
+| `BUILDX_VERSION=$(...)` | Save the result in a variable |
+
+```bash
+sudo curl -SL "https://github.com/docker/buildx/releases/download/${BUILDX_VERSION}/buildx-${BUILDX_VERSION}.linux-amd64" -o /usr/local/lib/docker/cli-plugins/docker-buildx
+```
+
+Downloads Buildx. **One line.** `linux-amd64` is for `x86_64` instances; for Graviton/ARM (`aarch64`) use `linux-arm64` instead.
+
+```bash
+sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-buildx
+```
+
+Makes it executable.
+
+```bash
+docker buildx version
+```
+
+You should see something like `github.com/docker/buildx v0.19.x ...`. It must be **0.17 or higher**.
+
 ---
 
 ## Step 4: Use Docker without `sudo`
@@ -219,6 +261,7 @@ Before moving on to [deploy-job.md](deploy-job.md), all of these should work **w
 ```bash
 docker version
 docker compose version
+docker buildx version
 docker ps
 ```
 

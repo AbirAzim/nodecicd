@@ -436,6 +436,7 @@ To get a terminal on EC2 from now on: **EC2 → your instance → Connect → Se
 | Status `Failed`, output says `dubious ownership` | `git pull` ran as root. Make sure it's `sudo -u ec2-user git pull`. |
 | Status `Failed`, output says `No such file or directory` | The repo isn't cloned at `/home/ec2-user/nodecicd` (Step 3b) |
 | Status `Failed`, output says `unknown command: compose` | Docker Compose isn't installed (see [ec2-setup.md](ec2-setup.md)) |
+| Status `Failed`, output says `compose build requires buildx 0.17.0 or later` | Buildx is missing or too old (see [ec2-setup.md](ec2-setup.md), Step 3e) |
 | `Waiter CommandExecuted failed: Max attempts exceeded` | The command took more than ~100 seconds (usually a slow first build). Check **Systems Manager → Run Command** to see if it finished anyway. |
 | `port is already allocated` | Another copy of the app is running (see the note in Step 3c) |
 

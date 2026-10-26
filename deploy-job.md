@@ -33,6 +33,7 @@ When you're done, SSH into EC2 and check that all of these work **without errors
 ```bash
 docker version
 docker compose version
+docker buildx version
 docker ps
 ```
 
@@ -216,6 +217,7 @@ docker compose logs      # should say "Server is running on port 8080"
 | `Connection timed out` | Port 22 isn't open in the Security Group (Step 2), or `EC2_HOST` is wrong |
 | `docker: command not found` / `unknown command: compose` | Docker or the Compose plugin is missing on EC2 (see [ec2-setup.md](ec2-setup.md), Steps 2–3) |
 | `permission denied ... docker.sock` | Your user isn't in the docker group (see [ec2-setup.md](ec2-setup.md), Step 4) |
+| `compose build requires buildx 0.17.0 or later` | Buildx is missing or too old on EC2 (see [ec2-setup.md](ec2-setup.md), Step 3e) |
 | Deploy succeeds but the browser won't load | Port 8080 isn't open in the Security Group (Step 2) |
 | Deploy job says **skipped** | Expected on a pull request. It only deploys on a push to `main`. |
 
