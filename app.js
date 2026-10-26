@@ -11,7 +11,15 @@ const users = [
 let nextId = 3;
 
 app.get('/', (req, res) => {
-    res.send('Hello World');
+    res.json({
+        message: 'Hello World',
+        ip: req.ip?.replace('::ffff:', ''),
+        method: req.method,
+        path: req.path,
+        userAgent: req.get('user-agent') ?? null,
+        language: req.get('accept-language') ?? null,
+        time: new Date().toISOString(),
+    });
 });
 
 app.get('/health', (req, res) => {

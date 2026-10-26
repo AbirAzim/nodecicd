@@ -3,11 +3,20 @@ import assert from 'node:assert/strict';
 import request from 'supertest';
 import app from '../app.js';
 
-test('GET / returns Hello World', async () => {
-    const res = await request(app).get('/');
+test('GET / returns Hello World with request info', async () => {
+    const res = await request(app)
+        .get('/')
+        .set('User-Agent', 'test-agent')
+        .set('Accept-Language', 'en-US');
 
     assert.equal(res.status, 200);
-    assert.equal(res.text, 'Hello World');
+    assert.equal(res.body.message, 'Hello World');
+    assert.ok(res.body.ip);
+    assert.equal(res.body.method, 'GET');
+    assert.equal(res.body.path, '/');
+    assert.equal(res.body.userAgent, 'test-agent');
+    assert.equal(res.body.language, 'en-US');
+    assert.ok(res.body.time);
 });
 
 test('GET /health returns ok', async () => {
